@@ -4,10 +4,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:path/path.dart' as p;
-import 'package:flutter/material.dart';
 import 'dart:html' as html;
-import 'dart:js' as js;
+
 import 'dart:ui' as ui;
 
 void main() {
@@ -68,16 +66,20 @@ class HtmlEditorWidgetWeb extends StatelessWidget {
         </script>
       </head>
       <body>
-      
-      <button onClick="window.parent.postMessage({haha: 'yes'}, '*');">123</button>
-      <script type="text/javascript">
-         
-          
-          window.parent.addEventListener('message', handleMessage, false);
-      
-function handleMessage(e) {
-   var data = JSON.parse(e.data);
-}         
+      <input id='i1'> 
+      <input id='i2'> 
+      <button onClick="cal();">123</button>
+      <script type="text/javascript">   
+        window.parent.addEventListener('message', handleMessage, false);
+        function handleMessage(e) {
+          var data = JSON.parse(e.data);
+          console.log(data);
+        }   
+
+        function cal(){
+          var inputVal = document.getElementById("i1").value + document.getElementById("i2").value;
+          window.parent.postMessage({haha: inputVal}, '*');
+        }
       </script>
       <style>
         body {
@@ -94,9 +96,9 @@ function handleMessage(e) {
       </body>
       </html>
     """;
-    html.window.onMessage.forEach((element) {
-      print('Event Received in callback: ${element.data}');
-    });
+    // html.window.onMessage.forEach((element) {
+    //   print('Event Received in callback: ${element.data}');
+    // });
     final data = <String, dynamic>{"hey": 123};
     final jsonEncoder = JsonEncoder();
     final json = jsonEncoder.convert(data);
@@ -110,13 +112,7 @@ function handleMessage(e) {
       ..width = '800' //'800'
       ..height = '400' //'400'
       ..srcdoc = htmlString
-      ..style.border = 'none'
-      ..onLoad.listen((event) async {
-        // html.document.on['setFS'].listen((html.Event event) {
-        //   print("HEY! I'M LISTENING!");
-        // });
-        // html.document.dispatchEvent(html.Event("setFS"));
-      });
+      ..style.border = 'none';
     // ignore: undefined_prefixed_name
     ui.platformViewRegistry
         .registerViewFactory(createdViewId, (int viewId) => iframe);
